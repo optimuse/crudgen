@@ -1,0 +1,31 @@
+{{if eq .Parent ""}}
+//GET /{{ .Struct | UnCapitalize }}s -> List of {{ .Struct }}s
+func List{{ .Struct }}() ([]{{ .Struct }}, error) {
+	q := "SELECT ID, Name, Value, Date FROM {{ .Struct }};"
+	rows, err := db.Query(q)
+{{else}}
+//GET /{{ .Parent | UnCapitalize }}/<id>/{{ .Struct | UnCapitalize }}s -> List of {{ .Struct }}s
+func List{{ .Struct }}(parentID int) ([]{{ .Struct }}, error) {
+	q := "SELECT ID, Name, Value, Date FROM {{ .Struct }} WHERE {{ .Parent }}ID = ?;"
+	rows, err := db.Query(q, parentID)
+{{end}}
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	items := make([]{{ .Struct }}, 0)
+	for rows.Next() {
+		item := new({{ .Struct }})
+		err = rows.Scan({{range $i, $e := .Fields}}{{if $i}}, {{end}}&item.{{$e.Name}}{{end}})
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, *item)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}

@@ -1,0 +1,8 @@
+//GET /{{ .Struct | UnCapitalize }}s/<id> -> Get {{ .Struct }}
+func Read{{ .Struct }}(id int) (*{{ .Struct }}, error) {
+	q := "SELECT {{range $i, $e := .Fields}}{{if $i}}, {{end}}{{$e.Name}}{{end}} FROM {{ .Struct }} WHERE ID = ?;"
+	row := db.QueryRow(q, id)
+	item := new({{ .Struct }})
+	err := row.Scan({{range $i, $e := .Fields}}{{if $i}}, {{end}}&item.{{$e.Name}}{{end}})
+	return item, err
+}

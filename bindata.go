@@ -1,0 +1,334 @@
+package main
+
+import (
+	"bytes"
+	"compress/gzip"
+	"fmt"
+	"io"
+	"strings"
+	"os"
+	"time"
+	"io/ioutil"
+	"path"
+	"path/filepath"
+)
+
+func bindata_read(data []byte, name string) ([]byte, error) {
+	gz, err := gzip.NewReader(bytes.NewBuffer(data))
+	if err != nil {
+		return nil, fmt.Errorf("Read %q: %v", name, err)
+	}
+
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, gz)
+	gz.Close()
+
+	if err != nil {
+		return nil, fmt.Errorf("Read %q: %v", name, err)
+	}
+
+	return buf.Bytes(), nil
+}
+
+type asset struct {
+	bytes []byte
+	info  os.FileInfo
+}
+
+type bindata_file_info struct {
+	name string
+	size int64
+	mode os.FileMode
+	modTime time.Time
+}
+
+func (fi bindata_file_info) Name() string {
+	return fi.name
+}
+func (fi bindata_file_info) Size() int64 {
+	return fi.size
+}
+func (fi bindata_file_info) Mode() os.FileMode {
+	return fi.mode
+}
+func (fi bindata_file_info) ModTime() time.Time {
+	return fi.modTime
+}
+func (fi bindata_file_info) IsDir() bool {
+	return false
+}
+func (fi bindata_file_info) Sys() interface{} {
+	return nil
+}
+
+var _template_create_tmpl = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xac\x90\xdf\x4e\x32\x31\x10\xc5\xaf\xb7\x4f\x31\x1f\x21\x5f\x16\xb3\xee\xde\xa3\x60\x0c\x60\xb2\x09\x59\x88\xbb\x78\x5f\xe9\x60\x9a\x60\x81\x6e\x89\x7f\xea\xbc\xbb\x6d\x05\xc2\x1a\x8d\x9a\x70\xd9\x99\x5f\xcf\x39\x73\xb2\x6c\x3a\x29\x2b\xc8\xac\x85\x74\xca\x35\x2a\x03\x6f\x30\x53\x03\xbe\x96\x86\x2f\xe5\x2b\x02\x51\x76\x29\x45\x3f\x10\xa5\xd1\xdb\xf9\x17\x44\x0d\xe7\x7d\x18\x68\xe4\x06\x41\xe1\x13\x1c\xb1\x44\x6c\xb1\x55\xf3\xdd\xb6\xb1\x88\xad\xd5\x5c\x3d\x20\xb4\x65\x02\x6d\x84\x6e\x0f\xd2\x1b\x89\x4b\x51\x17\xab\x7c\x48\x64\xad\x5c\xb8\x1d\x51\xe2\x04\x51\x09\x3f\x69\x63\x5a\xf0\x47\xfc\x14\x81\x08\xc2\xaa\x7a\x59\xa3\xa7\x02\xdc\x81\xf8\xac\xe1\x97\x00\x6a\xbd\xd2\x1d\xb0\x2c\xda\x78\xb7\x56\x5e\x94\xa3\xdb\x0a\xf2\xa2\x9a\xc0\xa9\xa2\x1d\xf9\xdf\x5d\x8f\x67\xa3\x12\xfe\x2e\x76\xb5\x97\xb8\x68\xb1\x48\x63\x1d\x92\xfb\x7f\xe2\x3e\x1d\x3d\xe3\x3c\xde\x78\xf4\x64\xe5\xed\xdd\x58\xe4\xfe\x78\xa7\x7f\x3d\x50\x72\xe9\x7b\x72\xee\x66\xab\x95\x7f\x86\x10\x2c\x22\x47\x89\x43\x20\x17\x2e\x1d\xf3\xda\xe4\xaa\x46\x6d\x72\x11\xff\x5a\x64\x37\xfb\xdf\xe8\xdd\xc3\xf9\xb0\x1b\x01\x48\x65\x62\x29\x3a\x89\x1b\xfc\x78\xe9\xa1\xf9\x2e\x7c\x7f\xe4\x87\x52\x38\xd4\xf9\x27\x3e\x0c\x23\xf6\x1e\x00\x00\xff\xff\xce\x66\x72\x67\x00\x03\x00\x00")
+
+func template_create_tmpl_bytes() ([]byte, error) {
+	return bindata_read(
+		_template_create_tmpl,
+		"template/create.tmpl",
+	)
+}
+
+func template_create_tmpl() (*asset, error) {
+	bytes, err := template_create_tmpl_bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindata_file_info{name: "template/create.tmpl", size: 768, mode: os.FileMode(420), modTime: time.Unix(1421253088, 0)}
+	a := &asset{bytes: bytes, info:  info}
+	return a, nil
+}
+
+var _template_crud_tmpl = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x2a\x48\x4c\xce\x4e\x4c\x4f\x55\xa8\xae\x56\xd0\x0b\x80\xb2\x6b\x6b\xb9\xb8\xaa\xab\x4b\x52\x73\x0b\x72\x12\x4b\x52\x15\x94\x72\x32\x8b\x4b\xf4\x4a\x80\x3c\x25\x05\x3d\xa0\x1c\xb2\x54\x72\x51\x2a\x90\xc6\x21\x09\x94\x4b\xc1\x21\x55\x5a\x90\x82\x5b\x5f\x4a\x6a\x4e\x2a\x8a\x24\x20\x00\x00\xff\xff\x2a\x5e\xa9\x28\xa5\x00\x00\x00")
+
+func template_crud_tmpl_bytes() ([]byte, error) {
+	return bindata_read(
+		_template_crud_tmpl,
+		"template/crud.tmpl",
+	)
+}
+
+func template_crud_tmpl() (*asset, error) {
+	bytes, err := template_crud_tmpl_bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindata_file_info{name: "template/crud.tmpl", size: 165, mode: os.FileMode(420), modTime: time.Unix(1421253101, 0)}
+	a := &asset{bytes: bytes, info:  info}
+	return a, nil
+}
+
+var _template_delete_tmpl = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x54\xcd\x41\xcb\x82\x40\x10\xc6\xf1\xb3\xfb\x29\x1e\x3c\x29\xf8\xba\xf7\xb7\xb4\x43\x6e\x14\x14\x81\x15\x1d\xc3\xdc\x09\x16\x64\xcb\x6d\x84\xc8\xf6\xbb\x87\xe0\x21\xcf\xbf\xf9\xcf\x23\x65\xa1\xb6\xea\xa8\x20\xfb\x1e\xe9\x81\x5d\x57\x33\x3e\x38\xd9\x65\xf5\x30\x5c\x35\xe6\x4d\xf0\xfe\x29\xe7\x46\xe7\xf8\xcb\x51\x50\x43\x4c\xf8\x39\xf6\x5e\xdc\x3a\x5b\x8f\x32\x81\xc8\x68\x18\xcb\x31\xc8\xb9\xbb\x43\x2f\x82\x16\xff\x19\xc2\x71\x72\x55\xee\x77\xd3\x4f\x38\xaf\x55\xa9\xb0\x29\x90\x61\x31\x0b\x45\x70\x49\x86\x76\x88\xf4\x35\x55\x2f\xaa\xa3\x36\x81\xd1\xb1\x08\x1c\x71\xe7\xec\xa0\xc2\x8b\x6f\x00\x00\x00\xff\xff\x8e\x4b\xc4\x52\xc6\x00\x00\x00")
+
+func template_delete_tmpl_bytes() ([]byte, error) {
+	return bindata_read(
+		_template_delete_tmpl,
+		"template/delete.tmpl",
+	)
+}
+
+func template_delete_tmpl() (*asset, error) {
+	bytes, err := template_delete_tmpl_bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindata_file_info{name: "template/delete.tmpl", size: 198, mode: os.FileMode(420), modTime: time.Unix(1421253106, 0)}
+	a := &asset{bytes: bytes, info:  info}
+	return a, nil
+}
+
+var _template_list_tmpl = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xb4\x92\x41\x8f\xd3\x30\x10\x85\xcf\xf1\xaf\x78\x54\x15\x4a\x50\x48\x39\x03\x59\x0e\x6d\x16\x56\x5a\x16\xd8\x2e\x70\x40\x1c\x4c\x33\x41\x16\xa9\xd3\x3a\x8e\x0a\x18\xff\x77\x3c\x26\x48\x8d\x22\x21\x0e\x70\xb2\x3c\x9e\xf7\x66\xbe\x27\x3b\xa7\x1a\xd0\x11\xc5\x6b\x69\x48\x5b\x2c\x16\xde\x8b\xd5\xea\x79\x75\x87\x95\x73\x28\xb6\xd6\x0c\x3b\x8b\x1f\x78\xab\xd7\xf2\xa0\xac\x6c\xd5\x77\x82\xf7\x3d\x1e\x5e\xe0\x5a\xf5\x16\x5d\x83\xb3\xc6\xf0\x22\x9a\x41\xef\xe2\xdb\xa4\x9e\x66\x48\x3f\x7c\x9c\x94\x72\x90\x31\x9d\xc9\xe0\x44\x72\xc4\xe3\x12\x8b\x6d\x75\x5d\xad\xef\x70\xb5\xc9\x71\x23\xf7\x94\xe3\x9d\x6c\x87\x70\x6c\xa4\x25\x5c\xde\xbe\x7a\x39\x9d\xf5\x64\x21\x12\xd3\x9d\xfa\x68\xc4\x06\xf5\xa7\xe2\xcd\x40\xe6\x5b\x7a\xcc\x84\x73\xd4\xf6\x34\xc5\x19\x29\x67\x38\xab\xa7\xaa\xbe\xf8\xd7\xc0\x87\x38\xec\x6a\x03\xa5\xed\x7f\x80\xc7\xfb\x17\xd5\x6d\x85\x33\x2c\xef\xc3\xb0\x12\xcf\xfe\x10\x4b\x8e\xdf\x5b\xc5\x80\x74\x1d\xf2\x49\xf8\x0b\x84\xc6\x7b\x25\xb4\x6a\x79\x9f\xc4\x90\x1d\x8c\xe6\x6b\xf4\x10\x49\xe8\xaa\xa9\x21\x03\xf6\x2d\xd6\x6d\xd7\x53\x9a\x89\x20\xb5\xb4\xef\x79\xc4\x5e\x7e\xa1\x39\xe2\xa3\x4c\x24\x4d\x37\xaa\x6e\xe8\xab\x4d\x23\x6f\x94\xb1\x4a\xd3\x29\x9d\x48\x42\x7f\xc2\xbb\x94\xbf\x24\xdb\x9d\xd4\xa1\xc1\x48\xfd\x99\xb0\x54\x39\x96\xc4\xb2\xe2\x52\x51\x5b\xf7\xde\xc7\xef\xbb\x54\x3c\x6a\xa4\xb9\xcf\xd6\x85\x73\x4b\x2a\x38\x44\x6e\x89\x75\x36\x9e\x73\xce\x41\x99\x74\xa4\x2a\x21\x0f\x87\x20\x4e\xe3\x35\xc7\x03\x3e\xb3\x98\xc5\xd9\x8a\x95\x31\x21\x89\xbf\xcc\x70\xac\x8d\x86\xe1\x49\x78\xf1\x33\x00\x00\xff\xff\xbb\xca\x81\x93\x83\x03\x00\x00")
+
+func template_list_tmpl_bytes() ([]byte, error) {
+	return bindata_read(
+		_template_list_tmpl,
+		"template/list.tmpl",
+	)
+}
+
+func template_list_tmpl() (*asset, error) {
+	bytes, err := template_list_tmpl_bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindata_file_info{name: "template/list.tmpl", size: 899, mode: os.FileMode(420), modTime: time.Unix(1421274124, 0)}
+	a := &asset{bytes: bytes, info:  info}
+	return a, nil
+}
+
+var _template_read_tmpl = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x94\x90\xcd\x4e\xeb\x30\x14\x84\xd7\xf1\x53\x8c\xaa\xe8\x2a\xb9\x0a\xce\x1e\x68\x59\x14\xb7\x20\xf1\x23\x92\x22\xd6\x26\x3e\x45\x96\x5a\x87\xba\x8e\x22\x30\x7e\x77\xec\xae\x88\x58\xb1\xb3\xbe\x39\xf3\x69\xe4\xba\x5e\x8b\x0d\x6a\xef\xc1\x5b\x67\x87\xce\xe1\x0b\xcf\x66\x29\xdf\xb5\x93\x3b\xfd\x49\x08\xe1\x58\x5f\x6a\xb5\xc0\xd9\x02\x6b\x72\xf8\x71\x19\x02\xdb\x0e\xa6\x43\x43\x52\x4d\x70\xa1\x15\xb4\x71\x25\x8a\xff\x13\x5e\x81\xac\xed\x6d\x09\xcf\xb2\x03\xce\xe7\x98\xb5\xe2\x4e\x2c\x37\x51\x6a\xa5\x79\x23\xe4\xba\x42\x4e\x29\xe1\x2b\x4d\x3b\x75\x0c\xc1\x7b\xbd\x8d\x3c\x95\xbd\x27\xa3\x12\xc9\x89\x3f\xc8\x3d\xa5\xe7\x89\x60\xd5\x3c\xde\x4f\x97\xe1\xe5\x46\x34\x02\xb7\xd7\x98\xe3\xea\x62\xc6\x32\xdb\x8f\xc9\xab\x5e\xf9\xd3\x40\xf6\xa3\xe9\xc7\xe2\x50\x41\xab\x92\x65\xda\xd1\x3e\x65\x86\xc6\x62\x22\x89\x59\x1c\x9c\xa2\xd8\xe6\x6d\x27\x4d\xf1\xa7\xa5\xff\x92\x99\xff\xde\x1b\xbd\x96\xdc\x60\x0d\xd2\xc1\xe9\x57\x58\x60\xdf\x01\x00\x00\xff\xff\x01\x5b\x57\x00\x8b\x01\x00\x00")
+
+func template_read_tmpl_bytes() ([]byte, error) {
+	return bindata_read(
+		_template_read_tmpl,
+		"template/read.tmpl",
+	)
+}
+
+func template_read_tmpl() (*asset, error) {
+	bytes, err := template_read_tmpl_bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindata_file_info{name: "template/read.tmpl", size: 395, mode: os.FileMode(420), modTime: time.Unix(1421274141, 0)}
+	a := &asset{bytes: bytes, info:  info}
+	return a, nil
+}
+
+var _template_update_tmpl = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\x84\x8f\x41\x4b\xf3\x30\x1c\x87\xcf\xcd\xa7\xf8\x31\x7a\x68\x5f\xfa\xa6\x77\x75\x93\xb1\x46\xec\x65\x0c\xd7\xe2\x51\xb2\xe6\x3f\x0d\x6c\xd9\x96\xa6\x20\xc6\x7c\x77\x9b\x21\xb2\x79\xf1\xfa\xfc\x1f\x9e\x5f\x52\x96\xab\xb6\x41\xe9\x3d\xf8\xda\xd9\xa1\x73\xf8\x44\x6b\x16\xf2\xa8\x9d\xdc\xe9\x0f\x42\x08\x7d\x79\xa7\xd5\x0c\xff\x67\x58\xbc\x49\xf3\x4a\xb8\x90\x43\xc0\xdc\x39\xab\x37\x83\xa3\xac\xcf\xd9\x76\x30\x1d\xda\xa3\x92\x8e\xae\xac\x4c\x3b\xda\xe3\xdf\x15\xcb\x41\xd6\x1e\x2c\x3c\x4b\x4e\xb8\x99\x62\xd2\xae\xaa\x79\x23\x7e\xe5\xd7\xa2\x19\x89\x3d\x0f\xa7\xba\x40\x4a\xd1\xe5\x0f\x9a\x76\xaa\x5f\x1e\xea\x2a\x04\xef\xf5\x76\xbc\x85\x50\x8c\x26\x19\x15\x49\x4a\x7c\x29\xf7\x34\x06\xa6\xb8\xff\xa6\x78\x7e\x14\x4f\x02\x75\x15\xd9\xed\x84\x25\x2f\x45\x7c\x42\xec\xa9\x0d\x17\xef\xd4\x65\xa7\xe2\xaf\xb1\xf8\x11\x7e\xd1\xff\xd9\xc4\xf9\x52\x57\x39\x4b\x2c\xb9\xc1\x9a\xd8\x66\x81\x7d\x05\x00\x00\xff\xff\x94\x14\x72\xa8\x62\x01\x00\x00")
+
+func template_update_tmpl_bytes() ([]byte, error) {
+	return bindata_read(
+		_template_update_tmpl,
+		"template/update.tmpl",
+	)
+}
+
+func template_update_tmpl() (*asset, error) {
+	bytes, err := template_update_tmpl_bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindata_file_info{name: "template/update.tmpl", size: 354, mode: os.FileMode(420), modTime: time.Unix(1421253123, 0)}
+	a := &asset{bytes: bytes, info:  info}
+	return a, nil
+}
+
+// Asset loads and returns the asset for the given name.
+// It returns an error if the asset could not be found or
+// could not be loaded.
+func Asset(name string) ([]byte, error) {
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	if f, ok := _bindata[cannonicalName]; ok {
+		a, err := f()
+		if err != nil {
+			return nil, fmt.Errorf("Asset %s can't read by error: %v", name, err)
+		}
+		return a.bytes, nil
+	}
+	return nil, fmt.Errorf("Asset %s not found", name)
+}
+
+// AssetInfo loads and returns the asset info for the given name.
+// It returns an error if the asset could not be found or
+// could not be loaded.
+func AssetInfo(name string) (os.FileInfo, error) {
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	if f, ok := _bindata[cannonicalName]; ok {
+		a, err := f()
+		if err != nil {
+			return nil, fmt.Errorf("AssetInfo %s can't read by error: %v", name, err)
+		}
+		return a.info, nil
+	}
+	return nil, fmt.Errorf("AssetInfo %s not found", name)
+}
+
+// AssetNames returns the names of the assets.
+func AssetNames() []string {
+	names := make([]string, 0, len(_bindata))
+	for name := range _bindata {
+		names = append(names, name)
+	}
+	return names
+}
+
+// _bindata is a table, holding each asset generator, mapped to its name.
+var _bindata = map[string]func() (*asset, error){
+	"template/create.tmpl": template_create_tmpl,
+	"template/crud.tmpl": template_crud_tmpl,
+	"template/delete.tmpl": template_delete_tmpl,
+	"template/list.tmpl": template_list_tmpl,
+	"template/read.tmpl": template_read_tmpl,
+	"template/update.tmpl": template_update_tmpl,
+}
+
+// AssetDir returns the file names below a certain
+// directory embedded in the file by go-bindata.
+// For example if you run go-bindata on data/... and data contains the
+// following hierarchy:
+//     data/
+//       foo.txt
+//       img/
+//         a.png
+//         b.png
+// then AssetDir("data") would return []string{"foo.txt", "img"}
+// AssetDir("data/img") would return []string{"a.png", "b.png"}
+// AssetDir("foo.txt") and AssetDir("notexist") would return an error
+// AssetDir("") will return []string{"data"}.
+func AssetDir(name string) ([]string, error) {
+	node := _bintree
+	if len(name) != 0 {
+		cannonicalName := strings.Replace(name, "\\", "/", -1)
+		pathList := strings.Split(cannonicalName, "/")
+		for _, p := range pathList {
+			node = node.Children[p]
+			if node == nil {
+				return nil, fmt.Errorf("Asset %s not found", name)
+			}
+		}
+	}
+	if node.Func != nil {
+		return nil, fmt.Errorf("Asset %s not found", name)
+	}
+	rv := make([]string, 0, len(node.Children))
+	for name := range node.Children {
+		rv = append(rv, name)
+	}
+	return rv, nil
+}
+
+type _bintree_t struct {
+	Func func() (*asset, error)
+	Children map[string]*_bintree_t
+}
+var _bintree = &_bintree_t{nil, map[string]*_bintree_t{
+	"template": &_bintree_t{nil, map[string]*_bintree_t{
+		"create.tmpl": &_bintree_t{template_create_tmpl, map[string]*_bintree_t{
+		}},
+		"crud.tmpl": &_bintree_t{template_crud_tmpl, map[string]*_bintree_t{
+		}},
+		"delete.tmpl": &_bintree_t{template_delete_tmpl, map[string]*_bintree_t{
+		}},
+		"list.tmpl": &_bintree_t{template_list_tmpl, map[string]*_bintree_t{
+		}},
+		"read.tmpl": &_bintree_t{template_read_tmpl, map[string]*_bintree_t{
+		}},
+		"update.tmpl": &_bintree_t{template_update_tmpl, map[string]*_bintree_t{
+		}},
+	}},
+}}
+
+// Restore an asset under the given directory
+func RestoreAsset(dir, name string) error {
+        data, err := Asset(name)
+        if err != nil {
+                return err
+        }
+        info, err := AssetInfo(name)
+        if err != nil {
+                return err
+        }
+        err = os.MkdirAll(_filePath(dir, path.Dir(name)), os.FileMode(0755))
+        if err != nil {
+                return err
+        }
+        err = ioutil.WriteFile(_filePath(dir, name), data, info.Mode())
+        if err != nil {
+                return err
+        }
+        err = os.Chtimes(_filePath(dir, name), info.ModTime(), info.ModTime())
+        if err != nil {
+                return err
+        }
+        return nil
+}
+
+// Restore assets under the given directory recursively
+func RestoreAssets(dir, name string) error {
+        children, err := AssetDir(name)
+        if err != nil { // File
+                return RestoreAsset(dir, name)
+        } else { // Dir
+                for _, child := range children {
+                        err = RestoreAssets(dir, path.Join(name, child))
+                        if err != nil {
+                                return err
+                        }
+                }
+        }
+        return nil
+}
+
+func _filePath(dir, name string) string {
+        cannonicalName := strings.Replace(name, "\\", "/", -1)
+        return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
+}
+

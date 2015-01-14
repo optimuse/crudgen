@@ -1,0 +1,6 @@
+//PUT /{{ .Struct | UnCapitalize }}s/<id> -> Change {{ .Struct }} Attribute(s)
+func Update{{ .Struct }}(item *{{ .Struct }}) error {
+	q := "UPDATE {{ .Struct }} SET {{range $i, $e := .FieldsNoID}}{{if $i}}, {{end}}{{$e.Name}} = ?{{end}} WHERE ID = ?;"
+	_, err := db.Exec(q, {{range $i, $e := .FieldsNoID}}item.{{$e.Name}}, {{end}} item.ID)
+	return err
+}

@@ -1,0 +1,17 @@
+//POST /{{ .Parent | UnCapitalize }}/<id>/{{ .Struct | UnCapitalize }}s -> Create new {{ .Struct }}
+func Create{{ .Struct }}({{range $i, $e := .FieldsNoID}}{{if $i}}, {{end}}{{$e.Name | UnCapitalize}} {{$e.Type}}{{end}}) (*{{ .Struct }}, error) {
+	q := "INSERT INTO {{ .Struct }}({{range $i, $e := .FieldsNoID}}{{if $i}}, {{end}}{{$e.Name}}{{end}}) VALUES ({{range $i, $e := .FieldsNoID}}{{if $i}}, {{end}}?{{end}});"
+	res, err := db.Exec(q, {{range $i, $e := .FieldsNoID}}{{if $i}}, {{end}}{{$e.Name | UnCapitalize}}{{end}})
+	if err != nil {
+		return nil, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+	return &{{ .Struct }}{
+		ID:	  int(id),
+		{{range $i, $e := .FieldsNoID}}{{$e.Name}}: {{$e.Name | UnCapitalize}},
+		{{end}}
+	}, nil
+}

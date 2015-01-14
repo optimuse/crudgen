@@ -1,0 +1,6 @@
+//DELETE /{{ .Struct | UnCapitalize }}s/<id> -> Delete {{ .Struct }}
+func Delete{{ .Struct }}(id int) error {
+	q := "DELETE FROM {{ .Struct }} WHERE ID = ?;"
+	_, err := db.Exec(q, id)
+	return err
+}
